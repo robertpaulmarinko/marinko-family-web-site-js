@@ -1,0 +1,15 @@
+{
+  "name": "marinko-family-web-site",
+  "version": "1.0.0",
+  "description": "Web site UI using only JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "dev": " http-server ./src --proxy http://localhost:8080?",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "http-server": "^0.12.3"
+  }
+}
