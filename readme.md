@@ -33,8 +33,35 @@ Note the some sources say putting a component into a HTML file is not a good ide
 I don't like having HTML imbedded in JS scripts, because then there is no color coding/syntax help from the editor.
 It does not look like VS Code recognize HTML that is imbedded in JS.
 
-## Handling URL changes
+## Handling URL changes and displaying pages
 
 https://gomakethings.com/how-to-detect-when-the-browser-url-changes-with-vanilla-js/
 
 https://gomakethings.com/how-to-update-the-browser-url-without-refreshing-the-page-using-the-vanilla-js-history-api/
+
+The routing-service.js file handles route management.  Pages are kept in memory unless explicitly closed.  This allows the state of the page to be maintained if the user returns to the page.
+
+Browser location history changes are tracked, so that loaded pages can be displayed.
+
+My convention all pages are in the "/pages" folder.  If the URL is set to "/my-content", the routing-service will try to load the file "/pages/my-content-page.js"
+
+Each page file must export a function that creates the page, like this:
+
+```
+export function createPage(global) {
+    return new RecipesPage(global);
+}
+```
+
+Each Page class must have a public "render" method like this
+
+```
+    render(htmlElement) {
+        const newContent = document.createTextNode("Recipes page");
+
+        // add the text node to the newly created div
+        htmlElement.appendChild(newContent);
+    }
+```
+
+
