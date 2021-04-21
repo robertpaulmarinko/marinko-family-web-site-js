@@ -64,4 +64,16 @@ Each Page class must have a public "render" method like this
     }
 ```
 
+## CSS Styling
 
+https://bulma.io
+
+Issues using a shared style sheet inside of web components
+
+https://www.smashingmagazine.com/2016/12/styling-web-components-using-a-shared-style-sheet/
+
+https://css-tricks.com/styling-a-web-component/
+
+https://meowni.ca/posts/part-theme-explainer/
+
+It seems that the best approach is to link the global stylesheet into the custom element.  Some articles mention that the elements will appear un-styled until the stylesheet is loaded.  But in testing, this doesn't seem to be an issue if the style sheet is also loaded in the main index.html file.  And it appears the browser is smart enough to not load the style sheet multiple times.

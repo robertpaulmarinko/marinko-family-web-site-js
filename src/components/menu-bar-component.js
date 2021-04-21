@@ -1,10 +1,26 @@
 const template = document.createElement('template');
 template.innerHTML = `
-    <style>
-    </style>
-    <a href='#' id='pictureOfDay'>Home</a>
-    <a href='#' id='recipes'>Recipes</a>
-  `;
+<link rel="stylesheet" href="/styles/bulma.min.css">
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/picture-of-the-day">
+            <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+        </a>
+
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+    <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" id="pictureOfDay">Home</a>
+            <a class="navbar-item" id="recipes">Recipes</a>
+        </div>
+    </div>    
+</nav>
+`;
 
 class MenuBarComponent extends HTMLElement {
     /** 
