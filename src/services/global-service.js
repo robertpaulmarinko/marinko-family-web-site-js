@@ -26,4 +26,12 @@ export class Global {
         const menuBar = document.getElementById('menuBar');
         menuBar.global = this;
     }
+
+    /**
+     * 
+     * @returns the base URL of the api service
+     */
+    apiUrl() {
+        return "https://p89uuc2375.execute-api.us-east-2.amazonaws.com";
+    }
 }
