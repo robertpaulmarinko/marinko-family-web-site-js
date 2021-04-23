@@ -1,3 +1,5 @@
+import '../components/picture-card-component.js';
+
 /**
  * Information for a single picture
  * @typedef PictureOfTheDayInfo
@@ -56,11 +58,28 @@ export class PictureOfTheDayPage {
      * @param {PictureOfTheDayResponse} picturesOfTheDayResponse 
      */
     renderPicturesOfTheDay(htmlElement, picturesOfTheDayResponse) {
-        picturesOfTheDayResponse.pictures.forEach((pictureOfTheDay) => {
-            const container = document.createElement('div');
-            container.innerText = pictureOfTheDay.description;
+        const containerElement = document.createElement('div');
+        containerElement.setAttribute('class', 'container');
+        htmlElement.appendChild(containerElement);
 
-            htmlElement.appendChild(container);
+        const titleElement = document.createElement('h1');
+        titleElement.setAttribute('class', 'title is-4');
+        titleElement.innerHTML = 'Pictures for Today';
+        containerElement.appendChild(titleElement);
+
+        const columnsElement = document.createElement('div');
+        columnsElement.setAttribute('class', 'columns is-multiline');
+        containerElement.appendChild(columnsElement);
+
+        picturesOfTheDayResponse.pictures.forEach((pictureOfTheDay) => {
+            const columnElement = document.createElement('div');
+            columnElement.setAttribute('class', 'column is-half');
+            columnsElement.appendChild(columnElement);
+
+            const pictureCard = document.createElement('picture-card');
+            pictureCard.setAttribute('image', `/images/${pictureOfTheDay.key}`);
+            pictureCard.setAttribute('caption', pictureOfTheDay.description);
+            columnElement.appendChild(pictureCard);
         });
     }
 }
