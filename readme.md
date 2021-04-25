@@ -10,7 +10,15 @@ To start run
 
 ```npm run dev```
 
-## Web Components
+
+## Deploying to AWS
+
+Web site files are hosted in a S3 bucket call www.marinkofamily.com
+
+Run the `./deploy.ps1` PowerShell file to upload files to the bucket
+
+
+## Web Components Resources
 
 [Mozilla Web Component Documentation](https://developer.mozilla.org/en-US/docs/Web/Web_Components)
 
@@ -77,3 +85,42 @@ https://css-tricks.com/styling-a-web-component/
 https://meowni.ca/posts/part-theme-explainer/
 
 It seems that the best approach is to link the global stylesheet into the custom element.  Some articles mention that the elements will appear un-styled until the stylesheet is loaded.  But in testing, this doesn't seem to be an issue if the style sheet is also loaded in the main index.html file.  And it appears the browser is smart enough to not load the style sheet multiple times.
+
+# AWS Setup
+
+## S3 
+Created a S3 bucket called www.marinkofamily.com.  Disabled all public access.
+
+## SSL Certificate
+
+Created a SSL certificate in us-east-1 for www.marinkofamily.com
+
+Must be in us-east-1 to work with CloudFront
+
+## CloudFront
+
+Created a CloudFront distribution.
+
+When creating the S3 origin in CloudFront, make sure to use the S3 name that includes the region, like `www.marinkofamily.com.s3.us-east-2.amazonaws.com`
+
+Turn On the restrict bucket access option.
+
+Set the CNAME to www.marinkofamily.com.  Must be done to allow the Route53 record to be created
+
+## Route53
+
+In Route53, create a DNS Alias (A) record for www.marinkofamily.com that points to the CloudFront distribution.
+
+## mime type error
+
+When trying to view the website, the browser was throwing errors like
+
+```Loading module from “https://beta.marinkofamily.com/services/global-service.js” was blocked because of a disallowed MIME type (“text/plain”)```
+
+IN S3, the mime is set to text/plain by default.  This needs to be changed to text/javascript to avoid this error.
+
+The solution is to call the `aws s3 sync` command multiple times.  The first time uploaded all files except .js files.
+
+The second call uploads the .js files and sets the correct mime type.
+
+See the deploy.ps1 file

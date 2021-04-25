@@ -19,7 +19,7 @@ export class Global {
      * Start the application
      */
     startApplication() {
-        console.log('in Global.startApplication');
+        console.log('running Global.startApplication');
         this.routingService.loadInitialPage();
         
         // init menu bar

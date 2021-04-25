@@ -4,7 +4,7 @@ template.innerHTML = `
 <article class="panel is-info">
   <p class="panel-heading"></p>
   <div class="panel-block">
-    <img alt="Image">
+    <img alt="Image" />
   </div>
 </article>
 `;
