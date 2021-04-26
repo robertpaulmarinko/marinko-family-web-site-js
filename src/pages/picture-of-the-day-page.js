@@ -77,7 +77,7 @@ export class PictureOfTheDayPage {
             columnsElement.appendChild(columnElement);
 
             const pictureCard = document.createElement('picture-card');
-            pictureCard.setAttribute('image', `/images/${pictureOfTheDay.key.toLowerCase()}?v=${picturesOfTheDayResponse.dateCreated}`);
+            pictureCard.setAttribute('image', `/images/${pictureOfTheDay.key}?v=${picturesOfTheDayResponse.dateCreated}`);
             pictureCard.setAttribute('caption', pictureOfTheDay.description);
             columnElement.appendChild(pictureCard);
         });
