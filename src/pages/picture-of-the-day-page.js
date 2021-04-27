@@ -1,4 +1,5 @@
 import '../components/picture-card-component.js';
+import '../components/video-card-component.js';
 
 /**
  * Information for a single picture
@@ -7,12 +8,29 @@ import '../components/picture-card-component.js';
  * @property {string} key - the name of the picture file
  * @property {string} description - description of the picture
  */
+
 /**
  * Response from the picture of the day API
  * @typedef PictureOfTheDayResponse
  * @type {object}
  * @property {string} dateCreated - the date and time the file was last updated
  * @property {PictureOfTheDayInfo[]} pictures - description of the picture
+ */
+
+/**
+ * Response from the video of the day API
+ * @typedef VideoInfo
+ * @type {object}
+ * @property {string} originalKey - key to full size file
+ * @property {string} streamKey - key to reduced file
+ * @property {string} description - description
+ */
+
+/**
+ * Response from the video of the day API
+ * @typedef VideoOfTheDayResponse
+ * @type {object}
+ * @property {VideoInfo[]} videos - description of the videos
  */
 
 
@@ -42,6 +60,23 @@ export class PictureOfTheDayPage {
      * @param {HTMLElement} htmlElement 
      */
     render(htmlElement) {
+        const pictureContainerElement = document.createElement('div');
+        pictureContainerElement.setAttribute('class', 'container');
+        htmlElement.appendChild(pictureContainerElement);
+
+        const videoContainerElement = document.createElement('div');
+        videoContainerElement.setAttribute('class', 'container');
+        htmlElement.appendChild(videoContainerElement);
+
+        this.loadPicturesOfTheDay(pictureContainerElement);
+        this.loadVideoOfTheDay(videoContainerElement);
+    }
+
+    /**
+     * Loads and displays pictures of the day
+     * @param {HTMLElement} htmlElement 
+     */
+    loadPicturesOfTheDay(htmlElement) {
         fetch(`${this._global.apiUrl()}/default/picturesOfTheDay/data`)
         .then(response => response.json())
         .then(
@@ -57,11 +92,7 @@ export class PictureOfTheDayPage {
      * @param {HTMLElement} htmlElement 
      * @param {PictureOfTheDayResponse} picturesOfTheDayResponse 
      */
-    renderPicturesOfTheDay(htmlElement, picturesOfTheDayResponse) {
-        const containerElement = document.createElement('div');
-        containerElement.setAttribute('class', 'container');
-        htmlElement.appendChild(containerElement);
-
+    renderPicturesOfTheDay(containerElement, picturesOfTheDayResponse) {
         const titleElement = document.createElement('h1');
         titleElement.setAttribute('class', 'title is-4');
         titleElement.innerHTML = 'Pictures for Today';
@@ -82,6 +113,41 @@ export class PictureOfTheDayPage {
             columnElement.appendChild(pictureCard);
         });
     }
+
+    /**
+     * Loads and displays the video of the day
+     * @param {HTMLElement} htmlElement 
+     */
+     loadVideoOfTheDay(htmlElement) {
+        fetch(`${this._global.apiUrl()}/default/videoOfTheDay/data`)
+        .then(response => response.json())
+        .then(
+            /**
+             * @param {VideoOfTheDayResponse} data 
+             */
+            data => this.renderVideoOfTheDay(htmlElement, data)
+        );
+    }
+
+    /**
+     * Creates the HTML for displaying the video
+     * @param {HTMLElement} htmlElement 
+     * @param {VideoOfTheDayResponse} videoOfTheDayResponse 
+     */
+    renderVideoOfTheDay(containerElement, videoOfTheDayResponse) {
+        const titleElement = document.createElement('h1');
+        titleElement.setAttribute('class', 'title is-4');
+        titleElement.innerHTML = 'Video for Today';
+        containerElement.appendChild(titleElement);
+
+        videoOfTheDayResponse.videos.forEach((videoOfTheDay) => {
+            const videoCard = document.createElement('video-card');
+            videoCard.setAttribute('video', `https://d2ovun8sk9llvq.cloudfront.net/${videoOfTheDay.streamKey}`);
+            videoCard.setAttribute('caption', videoOfTheDay.description);
+            containerElement.appendChild(videoCard);
+        });
+    }
+
 }
 
 /**
