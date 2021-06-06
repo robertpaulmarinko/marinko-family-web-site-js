@@ -1,10 +1,14 @@
-import  { RoutingService } from './routing-service.js';
+import { RoutingService } from './routing-service.js';
+import { AuthService} from './auth-service.js';
 
 /**
  * Class is used to bootstrap the application and hold any global application state.
  */
 export class Global {
+    /** @type {RoutingService} */
     routingService = null;
+    /** @type {AuthService} */
+    authService = null;
 
     /**
      * Create Global
@@ -13,6 +17,7 @@ export class Global {
      */
     constructor(rootElement) {
         this.routingService = new RoutingService(this, rootElement);
+        this.authService = new AuthService(this);
     }
 
     /**

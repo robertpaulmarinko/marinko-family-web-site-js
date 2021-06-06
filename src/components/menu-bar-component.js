@@ -16,6 +16,7 @@ template.innerHTML = `
         <div class="navbar-start">
             <a class="navbar-item" id="pictureOfDay">Home</a>
             <a class="navbar-item" id="recipes">Recipes</a>
+            <a class="navbar-item" id="login">Login</a>
         </div>
     </div>    
 </nav>
@@ -46,6 +47,11 @@ class MenuBarComponent extends HTMLElement {
             event.preventDefault();
             this.hideNavbarMenu();
             this.global.routingService.loadPage("recipes", true);
+        };
+        this.shadowRoot.getElementById('login').onclick = (event) => {
+            event.preventDefault();
+            this.hideNavbarMenu();
+            this.global.routingService.loadPage("login", true);
         };
 
         const navbarBurger = this.shadowRoot.querySelector('.navbar-burger');
