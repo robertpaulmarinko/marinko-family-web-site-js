@@ -48,6 +48,12 @@ export class PictureOfTheDayPage {
     title = "Pictures of the day";
     
     /**
+     * Used by the routing service to determine if login is required
+     * @type {boolean}
+     */
+    anonymous = true;
+    
+    /**
      * Constructor
      * @param {Global} global 
      */

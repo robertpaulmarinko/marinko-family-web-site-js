@@ -67,6 +67,13 @@ export class RoutingService {
             urlToLoad = urlToLoad.substring(1);
         }
 
+        let urlSearch = '';
+        const urlSearchCharIndex = urlToLoad.indexOf('?');
+        if (urlSearchCharIndex >= 0) {
+            urlSearch = urlToLoad.substring(urlSearchCharIndex);
+            urlToLoad = urlToLoad.substring(0, urlSearchCharIndex);
+        }
+
         console.log(`in RoutingService.loadPage, loading URL ${urlToLoad}`);
         /** @type {PageInfo} */
         let  pageInfo;
@@ -79,6 +86,13 @@ export class RoutingService {
             console.log(`creating ${urlToLoad}`)
             this.hideAllPages();
             const page = await this.createPageClassForURL(urlToLoad);
+
+            if (!page.anonymous && !this._global.authService.isLoggedIn()) {
+                // User is not logged in and page required login
+                // Redirect to the login page
+                await this.loadPage(`/login?redirect=${encodeURIComponent(urlToLoad)}`, true);
+                return;
+            }
 
             const pageContainer = document.createElement('div');
             this._rootHTMLElement.appendChild(pageContainer);
@@ -96,8 +110,8 @@ export class RoutingService {
             history.pushState(
                 { url: urlToLoad }, 
                 `Marinko Family - ${pageInfo.page.title}`, 
-                urlToLoad);
-            }
+                `${urlToLoad}${urlSearch}`);
+        }
     }
 
     showExistingPage(url) {

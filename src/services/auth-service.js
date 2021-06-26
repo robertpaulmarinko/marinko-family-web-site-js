@@ -66,4 +66,16 @@ export class AuthService {
 
         return response.success;
     }
+
+    /**
+     * Returns if the user is logged in
+     * @returns {boolean}
+     */
+    isLoggedIn() {
+        if (this._authToken) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

@@ -13,6 +13,10 @@ template.innerHTML = `
             <button class="button is-link" id="loginButton">Login</button>
         </div>
     </div>
+
+    <div id="failMessage" class="notification is-warning is-hidden">
+        Login failed, please try again
+    </div>
 </div>
 `;
 
@@ -21,7 +25,8 @@ export class LoginPage {
     _global = null;
 
     title = "Login";
-    
+    anonymous = true;
+
     constructor(global) {
         this._global = global;
     }
@@ -40,9 +45,20 @@ export class LoginPage {
         const password = document.getElementById('loginPassword').value;
         const loginOK = await this._global.authService.tryLogin(password);
         if (loginOK) {
+            console.log('Login is OK');
 
+            // check if a redirect page was specified
+            const searchParams = new URLSearchParams(location.search);
+            if (searchParams.has('redirect')) {
+                // go to the page specified in the URL
+                this._global.routingService.loadPage(searchParams.get('redirect'), true);
+            } else {
+                // go to a default page
+                this._global.routingService.loadPage('picture-of-the-day', true);
+            }
         } else {
-            
+            console.log('Login is not OK');
+            document.getElementById('failMessage').classList.remove('is-hidden');
         }
     }
 }
