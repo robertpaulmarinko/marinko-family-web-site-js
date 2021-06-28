@@ -7,11 +7,14 @@ export class RecipesPage {
         this._global = global;
     }
 
-    render(htmlElement) {
+    async render(htmlElement) {
         const newContent = document.createTextNode("Recipes page");
 
         // add the text node to the newly created div
         htmlElement.appendChild(newContent);
+
+        const recipes = await this._global.recipeService.getRecipes();
+        console.log(recipes);
     }
 }
 

@@ -1,6 +1,6 @@
 import { RoutingService } from './routing-service.js';
 import { AuthService} from './auth-service.js';
-
+import { RecipeService } from './recipe-service.js';
 /**
  * Class is used to bootstrap the application and hold any global application state.
  */
@@ -9,6 +9,8 @@ export class Global {
     routingService = null;
     /** @type {AuthService} */
     authService = null;
+    /** @type {RecipeService} */
+    recipeService = null;
 
     /**
      * Create Global
@@ -18,6 +20,7 @@ export class Global {
     constructor(rootElement) {
         this.routingService = new RoutingService(this, rootElement);
         this.authService = new AuthService(this);
+        this.recipeService = new RecipeService(this);
     }
 
     /**

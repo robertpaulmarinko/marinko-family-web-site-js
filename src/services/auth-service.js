@@ -23,21 +23,21 @@ export class AuthService {
      * 
      * @type {GlobalClass} 
      */
-     _global = null;
+    _global = null;
 
-     /**
-      * Auth token from a valid login, used to call secure APIs
-      * 
-      * @type {string}
-      */
-     _authToken = null;
+    /**
+     * Auth token from a valid login, used to call secure APIs
+     * 
+     * @type {string}
+     */
+    _authToken = null;
 
     /**
      * Constructor
      * 
      * @param {GlobalClass} global 
      */
-     constructor(global) {
+    constructor(global) {
         this._global = global;
     }
 
@@ -58,7 +58,7 @@ export class AuthService {
             method: 'POST',
             body: JSON.stringify(request),
         })
-        .then(response => response.json());
+            .then(response => response.json());
 
         if (response.success) {
             this._authToken = response.token;
@@ -76,6 +76,21 @@ export class AuthService {
             return true;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * Gets the headers needed to make an authenticated web service call
+     * @returns An object with the 'x-auth-token' property
+     */
+    getAuthHeader() {
+        if (this._authToken) {
+            return {
+                'Content-Type': 'application/json',
+                'x-auth-token': this._authToken,
+            }
+        } else {
+            return null;
         }
     }
 }

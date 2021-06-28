@@ -32,7 +32,6 @@ class MenuBarComponent extends HTMLElement {
 
     constructor() {
         super();
-        this.count = 0;
         this.attachShadow({ mode: 'open' });
     }
 
