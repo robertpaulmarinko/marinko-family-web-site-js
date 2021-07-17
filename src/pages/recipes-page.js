@@ -11,7 +11,13 @@ export class RecipesPage {
      * HTML element that contains the list of recipes
      * @type {HTMLElement} 
      **/
-    _recipeList = null;
+    _recipeListHTMLElement = null;
+
+    /**
+     * A list of all recipes
+     * @type {Recipe[]} recipes 
+     */
+    _recipes = [];
 
     constructor(global) {
         this._global = global;
@@ -20,8 +26,8 @@ export class RecipesPage {
     async render(htmlElement) {
         this.renderPageContent(htmlElement);
 
-        const recipes = await this._global.recipeService.getRecipes();
-        this.renderRecipes(recipes);
+        this._recipes = await this._global.recipeService.getRecipes();
+        this.renderRecipes(this._recipes);
     }
 
     /**
@@ -41,10 +47,10 @@ export class RecipesPage {
         shadow.appendChild(template.content.cloneNode(true));
 
         shadow.querySelector("search-field").addEventListener('search', (event) => {
-            console.log(`search event - ${event.detail}`);
+            this.filterRecipes(event.detail);
         });
 
-        this._recipeList = shadow.querySelector("#recipeList");
+        this._recipeListHTMLElement = shadow.querySelector("#recipeList");
     }
 
     /**
@@ -63,7 +69,16 @@ export class RecipesPage {
             recipeCard.setAttribute('source', recipe.source);
             columnElement.appendChild(recipeCard);
         });
-        this._recipeList.replaceChildren(...columnElements);
+        this._recipeListHTMLElement.replaceChildren(...columnElements);
+    }
+
+    filterRecipes(searchText) {
+        const searchTextLower = searchText.toLowerCase();
+        const filteredRecipes = this._recipes.filter((recipe) => {
+            return recipe.name.toLowerCase().indexOf(searchTextLower) >= 0 ||
+                   recipe.source.toLowerCase().indexOf(searchTextLower) >= 0;
+        });
+        this.renderRecipes(filteredRecipes);
     }
 }
 
