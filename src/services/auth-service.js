@@ -30,7 +30,12 @@ export class AuthService {
      * 
      * @type {string}
      */
-    _authToken = null;
+    get authToken() {
+        return window.sessionStorage.getItem('authToken');
+    }
+    set authToken(authToken) {
+        window.sessionStorage.setItem('authToken', authToken)
+    }
 
     /**
      * Constructor
@@ -61,7 +66,7 @@ export class AuthService {
             .then(response => response.json());
 
         if (response.success) {
-            this._authToken = response.token;
+            this.authToken = response.token;
         }
 
         return response.success;
@@ -72,7 +77,7 @@ export class AuthService {
      * @returns {boolean}
      */
     isLoggedIn() {
-        if (this._authToken) {
+        if (this.authToken) {
             return true;
         } else {
             return false;
@@ -84,10 +89,10 @@ export class AuthService {
      * @returns An object with the 'x-auth-token' property
      */
     getAuthHeader() {
-        if (this._authToken) {
+        if (this.authToken) {
             return {
                 'Content-Type': 'application/json',
-                'x-auth-token': this._authToken,
+                'x-auth-token': this.authToken,
             }
         } else {
             return null;
