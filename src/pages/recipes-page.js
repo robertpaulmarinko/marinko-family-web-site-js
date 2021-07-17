@@ -72,6 +72,10 @@ export class RecipesPage {
         this._recipeListHTMLElement.replaceChildren(...columnElements);
     }
 
+    /**
+     * Filters the recipes based on the search string entered
+     * @param {String} searchText 
+     */
     filterRecipes(searchText) {
         const searchTextLower = searchText.toLowerCase();
         const filteredRecipes = this._recipes.filter((recipe) => {

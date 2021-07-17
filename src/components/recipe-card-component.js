@@ -2,8 +2,10 @@ const template = document.createElement('template');
 template.innerHTML = `
 <link rel="stylesheet" href="/styles/bulma.min.css">
 <div class="card">
+  <header class="card-header">
+    <p class="card-header-title"></p>
+  </header>
   <div class="card-content">
-    <p class="title"></p>
     <p class="content"></p>
   </div>
   <footer class="card-footer">
@@ -22,7 +24,7 @@ class RecipeCardComponent extends HTMLElement {
     connectedCallback() {
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
-        this.shadowRoot.querySelector('.title').innerHTML = this.getAttribute('name');
+        this.shadowRoot.querySelector('.card-header-title').innerHTML = this.getAttribute('name');
         this.shadowRoot.querySelector('.content').innerHTML = this.getAttribute('source');
     }
 
