@@ -7,50 +7,63 @@ export class RecipesPage {
 
     title = "Recipes";
     
+    /** 
+     * HTML element that contains the list of recipes
+     * @type {HTMLElement} 
+     **/
+    _recipeList = null;
+
     constructor(global) {
         this._global = global;
     }
 
     async render(htmlElement) {
+        this.renderPageContent(htmlElement);
+
         const recipes = await this._global.recipeService.getRecipes();
+        this.renderRecipes(recipes);
+    }
 
-        const pageContainerElement = document.createElement('div');
-        pageContainerElement.setAttribute('class', 'container');
-        htmlElement.appendChild(pageContainerElement);
+    /**
+     * Renders the main page content.  Should only be called once/
+     * @param {HTMLElement} htmlElement 
+     */
+    renderPageContent(htmlElement) {
+        const template = document.createElement('template');
+        template.innerHTML = `
+        <link rel="stylesheet" href="/styles/bulma.min.css">
+        <h1 class="title is-4">Recipes</h1>
+        <search-field></search-field>
+        <div id="recipeList" class="columns is-multiline"></div>
+        `;
+        
+        const shadow = htmlElement.attachShadow({ mode: 'open' });
+        shadow.appendChild(template.content.cloneNode(true));
 
-        this.renderRecipes(pageContainerElement, recipes);
+        shadow.querySelector("search-field").addEventListener('search', (event) => {
+            console.log(`search event - ${event.detail}`);
+        });
+
+        this._recipeList = shadow.querySelector("#recipeList");
     }
 
     /**
      * Creates the HTML for displaying all of the recipes
-     * @param {HTMLElement} containerElement 
      * @param {Recipe[]} recipes 
      */
-     renderRecipes(containerElement, recipes) {
-        const titleElement = document.createElement('h1');
-        titleElement.setAttribute('class', 'title is-4');
-        titleElement.innerHTML = 'Recipes';
-        containerElement.appendChild(titleElement);
-
-        const searchField = document.createElement('search-field');
-        containerElement.appendChild(searchField);
-        searchField.addEventListener('search', (event) => {
-            console.log(`search event - ${event.detail}`);
-        });
-        const columnsElement = document.createElement('div');
-        columnsElement.setAttribute('class', 'columns is-multiline');
-        containerElement.appendChild(columnsElement);
-
+     renderRecipes(recipes) {
+        const columnElements = [];
         recipes.forEach((recipe) => {
             const columnElement = document.createElement('div');
             columnElement.setAttribute('class', 'column is-half');
-            columnsElement.appendChild(columnElement);
+            columnElements.push(columnElement);
 
             const recipeCard = document.createElement('recipe-card');
             recipeCard.setAttribute('name', recipe.name);
             recipeCard.setAttribute('source', recipe.source);
             columnElement.appendChild(recipeCard);
         });
+        this._recipeList.replaceChildren(...columnElements);
     }
 }
 
