@@ -72,6 +72,15 @@ Each Page class must have a public "render" method like this
     }
 ```
 
+Optionally, a page can have a "display" method that is called every time the route changes to that page, even if its already loaded
+
+## Page life-cycle
+
+- createPage function - Called the first time a page is viewed.  Created the page object.
+- constructor - Called the first time a page is viewed.  The "global" object is passed into the constructor
+- render function - Called the first time a page is viewed.  Used to output the HTML to the DOM
+- display function (optional) - Called each time the page is made active. Can be used to refresh the data
+
 ## CSS Styling
 
 https://bulma.io
@@ -85,6 +94,8 @@ https://css-tricks.com/styling-a-web-component/
 https://meowni.ca/posts/part-theme-explainer/
 
 It seems that the best approach is to link the global stylesheet into the custom element.  Some articles mention that the elements will appear un-styled until the stylesheet is loaded.  But in testing, this doesn't seem to be an issue if the style sheet is also loaded in the main index.html file.  And it appears the browser is smart enough to not load the style sheet multiple times.
+
+
 
 # AWS Setup
 

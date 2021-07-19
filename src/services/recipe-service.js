@@ -57,4 +57,13 @@ export class RecipeService {
         
         return this._recipes;
     }
+
+    /**
+     * Returns a s single recipe with the matching id
+     * @param {String} id 
+     * @returns {Recipe}
+     */
+    getRecipeById(id) {
+        return this.getRecipes().find((recipe) => recipe.id === id);
+    }
 }

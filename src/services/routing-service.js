@@ -105,6 +105,9 @@ export class RoutingService {
             this._pageStack.push(pageInfo);
 
             page.render(pageContainer);
+            if (page.display) {
+                page.display();
+            }
         }
         if (addToHistory) {
             history.pushState(
@@ -118,6 +121,9 @@ export class RoutingService {
         this._pageStack.forEach(page => {
             if (page.url === url) {
                 page.pageContainer.style.display = 'block';
+                if (page.display) {
+                    page.display();
+                }
             } else {
                 page.pageContainer.style.display = 'none';
             }

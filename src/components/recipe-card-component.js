@@ -10,7 +10,7 @@ template.innerHTML = `
   </div>
   <footer class="card-footer">
     <a href="#" class="card-footer-item">View</a>
-    <a href="#" class="card-footer-item">Edit</a>
+    <a id="editButton" href="#" class="card-footer-item">Edit</a>
   </footer>
 </div>
 `;
@@ -26,6 +26,13 @@ class RecipeCardComponent extends HTMLElement {
 
         this.shadowRoot.querySelector('.card-header-title').innerHTML = this.getAttribute('name');
         this.shadowRoot.querySelector('.content').innerHTML = this.getAttribute('source');
+
+        this.shadowRoot.getElementById('editButton').onclick = (event) => {
+          event.preventDefault();
+          const searchEvent = new CustomEvent('edit');
+          this.dispatchEvent(searchEvent);
+      };
+
     }
 
 }
