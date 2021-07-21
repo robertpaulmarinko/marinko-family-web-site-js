@@ -63,7 +63,8 @@ export class RecipeService {
      * @param {String} id 
      * @returns {Recipe}
      */
-    getRecipeById(id) {
-        return this.getRecipes().find((recipe) => recipe.id === id);
+    async getRecipeById(id) {
+        const recipes = await this.getRecipes();
+        return recipes.find((recipe) => recipe.id === id);
     }
 }

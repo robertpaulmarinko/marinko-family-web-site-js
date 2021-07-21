@@ -76,8 +76,8 @@ export class RoutingService {
 
         console.log(`in RoutingService.loadPage, loading URL ${urlToLoad}`);
         /** @type {PageInfo} */
-        let  pageInfo;
-        pageInfo = this._pageStack.find(x => x.url === urlToLoad);
+        let pageInfo = this._pageStack.find(x => x.url === urlToLoad);
+
         if (pageInfo) {
             // Page already loaded in memory, so show it
             console.log(`${urlToLoad} already loaded, so showing it`)
@@ -105,25 +105,31 @@ export class RoutingService {
             this._pageStack.push(pageInfo);
 
             page.render(pageContainer);
-            if (page.display) {
-                page.display();
-            }
         }
+
         if (addToHistory) {
             history.pushState(
                 { url: urlToLoad }, 
                 `Marinko Family - ${pageInfo.page.title}`, 
                 `${urlToLoad}${urlSearch}`);
         }
+
+        // Note that calling display must be done after doing "pushState", in
+        // case the page needs to inspect any URL parameter.
+        if (pageInfo.page.display) {
+            pageInfo.page.display();
+        }
     }
 
+    /**
+     * Makes the page with the specified url visible and hides
+     * all other pages
+     * @param {*} url - url of page to show
+     */
     showExistingPage(url) {
         this._pageStack.forEach(page => {
             if (page.url === url) {
                 page.pageContainer.style.display = 'block';
-                if (page.display) {
-                    page.display();
-                }
             } else {
                 page.pageContainer.style.display = 'none';
             }

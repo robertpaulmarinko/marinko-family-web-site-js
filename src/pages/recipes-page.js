@@ -31,10 +31,12 @@ export class RecipesPage {
     renderPageContent(htmlElement) {
         const template = document.createElement('template');
         template.innerHTML = `
-        <link rel="stylesheet" href="/styles/bulma.min.css">
-        <h1 class="title is-4">Recipes</h1>
-        <search-field></search-field>
-        <div id="recipeList" class="columns is-multiline"></div>
+        <div class="container">
+            <link rel="stylesheet" href="/styles/bulma.min.css">
+            <h1 class="title is-4">Recipes</h1>
+            <search-field></search-field>
+            <div id="recipeList" class="columns is-multiline"></div>
+        </div>
         `;
         
         const shadow = htmlElement.attachShadow({ mode: 'open' });
@@ -62,6 +64,7 @@ export class RecipesPage {
             recipeCard.setAttribute('name', recipe.name);
             recipeCard.setAttribute('source', recipe.source);
             recipeCard.addEventListener('edit', () => {
+                console.log(`Opening recipe page for id = ${recipe.id}`);
                 this._global.routingService.loadPage(`recipe?id=${recipe.id}`, true);
             });
             columnElement.appendChild(recipeCard);
