@@ -63,7 +63,7 @@ export class AuthService {
             method: 'POST',
             body: JSON.stringify(request),
         })
-            .then(response => response.json());
+        .then(response => response.json());
 
         if (response.success) {
             this.authToken = response.token;

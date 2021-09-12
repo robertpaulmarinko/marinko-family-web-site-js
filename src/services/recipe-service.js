@@ -67,4 +67,23 @@ export class RecipeService {
         const recipes = await this.getRecipes();
         return recipes.find((recipe) => recipe.id === id);
     }
+
+    /**
+     * Save or creates a recipe record.
+     * 
+     * @param {Recipe} recipe 
+     * @returns {string} id of the record that was saved
+     */
+    async saveRecipe(recipe) {
+        const response = await fetch(`${this._global.apiUrl()}/default/recipe`, {
+            method: 'POST',
+            body: JSON.stringify(recipe),
+            headers: this._global.authService.getAuthHeader(),
+        })
+        .then(response => response.json());
+        console.log(response);
+
+        this._recipes = response.recipes;
+        return response.updateId;
+    }
 }

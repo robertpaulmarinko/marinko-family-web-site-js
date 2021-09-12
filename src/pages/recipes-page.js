@@ -13,15 +13,21 @@ export class RecipesPage {
      **/
     _recipeListHTMLElement = null;
 
+    /**
+     * Last search text entered by the user
+     */
+    _lastSearchText = '';
+
     constructor(global) {
         this._global = global;
     }
 
     async render(htmlElement) {
         this.renderPageContent(htmlElement);
+    }
 
-        const allRecipes = await this._global.recipeService.getRecipes();
-        this.renderRecipes(allRecipes);
+    async display() {
+        await this.filterRecipes(this._lastSearchText);
     }
 
     /**
@@ -34,8 +40,11 @@ export class RecipesPage {
         <div class="container">
             <link rel="stylesheet" href="/styles/bulma.min.css">
             <h1 class="title is-4">Recipes</h1>
+            <div>
+                <button id="addButton" class="button is-info">Add Recipe</button>
+            </div>
             <search-field></search-field>
-            <div id="recipeList" class="columns is-multiline"></div>
+            <div id="recipeList" class="columns is-multiline mt-2"></div>
         </div>
         `;
         
@@ -43,8 +52,10 @@ export class RecipesPage {
         shadow.appendChild(template.content.cloneNode(true));
 
         shadow.querySelector("search-field").addEventListener('search', (event) => {
-            this.filterRecipes(event.detail);
+            this._lastSearchText = event.detail;
+            this.filterRecipes(this._lastSearchText);
         });
+        shadow.getElementById('addButton').onclick = () => { this._global.routingService.loadPage(`recipe`, true); };
 
         this._recipeListHTMLElement = shadow.querySelector("#recipeList");
     }
