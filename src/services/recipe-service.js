@@ -53,7 +53,7 @@ export class RecipeService {
             headers: this._global.authService.getAuthHeader(),
         })
         .then(response => response.json());
-        this._recipes = response.recipes;
+        this._recipes = this.sortRecipes(response.recipes);
         
         return this._recipes;
     }
@@ -83,7 +83,52 @@ export class RecipeService {
         .then(response => response.json());
         console.log(response);
 
-        this._recipes = response.recipes;
+        this._recipes = this.sortRecipes(response.recipes);
         return response.updateId;
+    }
+
+    /**
+     * Uploads a file associated with a recipe
+     * @param {*} file 
+     */
+    async uploadFile(file) {
+        const uploadUrlResponse = await fetch(`${this._global.apiUrl()}/default/recipe/uploadurl`, {
+            method: 'GET',
+            headers: this._global.authService.getAuthHeader(),
+        })
+        .then(response => response.json());
+
+        console.log('uploadUrlResponse', uploadUrlResponse);
+
+        const formData = new FormData();           
+        formData.append("file", file);
+
+        console.log('file', file);
+        await fetch(uploadUrlResponse.url, {
+            method: "PUT", 
+            body: file,
+            headers: this._global.authService.getAuthHeader('image/jpeg'),
+        });
+
+        return uploadUrlResponse.fileKey;
+    }
+
+    /**
+     * Sorts the recipes by name
+     * @param {Recipe[]} recipes 
+     * @returns {Recipe[]}
+     */
+    sortRecipes(recipes) {
+        return recipes.sort((a, b) => {
+            var aName = a.name.toLowerCase();
+            var bName = b.name.toLowerCase();
+            if (aName < bName) {
+                return -1
+            } else if (aName > bName) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
     }
 }

@@ -1,4 +1,5 @@
 import '../components/input-field-component.js';
+import '../components/file-upload-component.js';
 
 export class RecipePage {
     /** @type {Global} */
@@ -12,6 +13,7 @@ export class RecipePage {
     _nameField = null;
     _sourceField = null;
     _instructionsField = null;
+    _fileUpload = null;
     _saveProgress = null;
     _saveConfirmation = null;
 
@@ -73,6 +75,7 @@ export class RecipePage {
             <input-field id="name" label="Name"></input-field>
             <input-field id="source" label="Source"></input-field>
             <input-field id="instructions" label="Instructions" type="textarea"></input-field>
+            <file-upload id="fileUpload" label="Picture"></file-upload>
             <div class="mt-2">
                 <button id="saveButton" class="button is-success">Save</button>
                 <button id="backButton" class="button is-info">Back</button>
@@ -94,6 +97,7 @@ export class RecipePage {
         this._nameField = shadow.getElementById('name');
         this._sourceField = shadow.getElementById('source');
         this._instructionsField = shadow.getElementById('instructions');
+        this._fileUpload = shadow.getElementById('fileUpload');
         this._saveProgress = shadow.getElementById('saveProgress');
         this._saveConfirmation = shadow.getElementById('saveConfirmation');
 
@@ -125,12 +129,20 @@ export class RecipePage {
         this._recipe.instructions = this._instructionsField.value;
     }
 
+    async uploadFiles() {
+        const file = this._fileUpload.file;
+        if (file) {
+            this._recipe.imageStorageKey = await this._global.recipeService.uploadFile(file);
+        }
+    }
+
     /**
      * Save the recipe changes by calling the API
      */
     async saveRecipe() {
         this._saveProgress.classList.remove('is-hidden');
         this._saveConfirmation.classList.add('is-hidden');
+        await this.uploadFiles();
         this.updateRecipeObjectWithFieldValues();
         const recipeId = await this._global.recipeService.saveRecipe(this._recipe);
         if (this._recipe.id !== recipeId) {

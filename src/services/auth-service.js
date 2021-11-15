@@ -86,12 +86,13 @@ export class AuthService {
 
     /**
      * Gets the headers needed to make an authenticated web service call
+     * contentType - string - optional, default to 'application/json' if not given.
      * @returns An object with the 'x-auth-token' property
      */
-    getAuthHeader() {
+    getAuthHeader(contentType) {
         if (this.authToken) {
             return {
-                'Content-Type': 'application/json',
+                'Content-Type': contentType || 'application/json',
                 'x-auth-token': this.authToken,
             }
         } else {
