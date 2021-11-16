@@ -68,15 +68,19 @@ class FileUploadComponent extends HTMLElement {
         });
        
         this._removeButton.onclick = () => {
-            this._uploadedFile = null;
-            this._fileNameElement.innerHTML = "";
-            this._fileNameElement.classList.add('is-hidden');
-            this._removeButton.classList.add('is-hidden');
+            this.clearUpload();
         };
     }
 
     get file() {
         return this._uploadedFile;
+    }
+
+    clearUpload() {
+        this._uploadedFile = null;
+        this._fileNameElement.innerHTML = "";
+        this._fileNameElement.classList.add('is-hidden');
+        this._removeButton.classList.add('is-hidden');
     }
 }
 

@@ -13,6 +13,7 @@ export class RecipePage {
     _nameField = null;
     _sourceField = null;
     _instructionsField = null;
+    _imageField = null;
     _fileUpload = null;
     _saveProgress = null;
     _saveConfirmation = null;
@@ -38,7 +39,7 @@ export class RecipePage {
             this._recipe = await this._global.recipeService.getRecipeById(searchParams.get('id'));
             if (this._recipe) {
                 console.log(`loaded recipe record ${this._recipe.id} - ${this._recipe.name}`);
-                this.loadRecipeFields(this._recipe);
+                await this.loadRecipeFields(this._recipe);
             } else {
                 // id, not found
                 console.log(`id of "${searchParams.get('id')}" not found in recipe list"`);
@@ -54,7 +55,7 @@ export class RecipePage {
                 instructions: '',
                 imageStorageKey: null,
             };
-            this.loadRecipeFields(this._recipe);
+            await this.loadRecipeFields(this._recipe);
         }
 
         // Reset all UI elements
@@ -76,6 +77,7 @@ export class RecipePage {
             <input-field id="source" label="Source"></input-field>
             <input-field id="instructions" label="Instructions" type="textarea"></input-field>
             <file-upload id="fileUpload" label="Picture"></file-upload>
+            <img id="image" class="is-hidden mt-2"></img>
             <div class="mt-2">
                 <button id="saveButton" class="button is-success">Save</button>
                 <button id="backButton" class="button is-info">Back</button>
@@ -98,6 +100,7 @@ export class RecipePage {
         this._sourceField = shadow.getElementById('source');
         this._instructionsField = shadow.getElementById('instructions');
         this._fileUpload = shadow.getElementById('fileUpload');
+        this._imageField  = shadow.getElementById('image');
         this._saveProgress = shadow.getElementById('saveProgress');
         this._saveConfirmation = shadow.getElementById('saveConfirmation');
 
@@ -113,12 +116,26 @@ export class RecipePage {
      * Loads recipe data into the HTML input fields
      * @param {Recipe} recipe 
      */
-    loadRecipeFields(recipe) {
+    async loadRecipeFields(recipe) {
         this._nameField.value = recipe.name;
         this._sourceField.value = recipe.source;
         this._instructionsField.value = recipe.instructions;
+        await this.displayPicture(recipe);
     }
 
+    /**
+     * Displays the picture if there is one loaded
+     * @param {Recipe} recipe 
+     */
+    async displayPicture(recipe) {
+        this._imageField.classList.add("is-hidden");
+        if (recipe.imageStorageKey) {
+            this._imageField.src = await this._global.recipeService.getDownloadUrl(recipe.imageStorageKey);
+            this._imageField.classList.remove("is-hidden");
+        } else {
+            this._imageField.src = '';
+        }
+    }
     /**
      * Updates the _recipe object with the user entered values
      * in the HTML fields.
@@ -129,6 +146,9 @@ export class RecipePage {
         this._recipe.instructions = this._instructionsField.value;
     }
 
+    /**
+     * If a file has been selected, uploads the file to the server
+     */
     async uploadFiles() {
         const file = this._fileUpload.file;
         if (file) {
@@ -152,6 +172,9 @@ export class RecipePage {
         }
         this._saveProgress.classList.add('is-hidden');
         this._saveConfirmation.classList.remove('is-hidden');
+
+        this._fileUpload.clearUpload();
+        await this.displayPicture(this._recipe);
     }
 }
 

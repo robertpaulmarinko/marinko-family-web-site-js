@@ -98,12 +98,6 @@ export class RecipeService {
         })
         .then(response => response.json());
 
-        console.log('uploadUrlResponse', uploadUrlResponse);
-
-        const formData = new FormData();           
-        formData.append("file", file);
-
-        console.log('file', file);
         await fetch(uploadUrlResponse.url, {
             method: "PUT", 
             body: file,
@@ -111,6 +105,21 @@ export class RecipeService {
         });
 
         return uploadUrlResponse.fileKey;
+    }
+
+    /**
+     * Gets a URL to download a single image
+     * @param {String} imageStorageKey 
+     * @returns - URL for the picture
+     */
+    async getDownloadUrl(imageStorageKey) {
+        const downloadUrlResponse = await fetch(`${this._global.apiUrl()}/default/recipe/downloadurl/${imageStorageKey}`, {
+            method: 'GET',
+            headers: this._global.authService.getAuthHeader(),
+        })
+        .then(response => response.json());
+
+        return downloadUrlResponse.url;
     }
 
     /**
