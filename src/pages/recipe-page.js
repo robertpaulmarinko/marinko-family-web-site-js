@@ -13,10 +13,18 @@ export class RecipePage {
     _nameField = null;
     _sourceField = null;
     _instructionsField = null;
-    _imageField = null;
-    _fileUpload = null;
+
+    // Array of fileUpload components
+    _fileUpload = [];
+
+    // Array of image fields
+    _imageField = [];
+
+    _maxImages = 3;
+
     _saveProgress = null;
     _saveConfirmation = null;
+
 
     /**
      * The current loaded recipe
@@ -76,8 +84,19 @@ export class RecipePage {
             <input-field id="name" label="Name"></input-field>
             <input-field id="source" label="Source"></input-field>
             <input-field id="instructions" label="Instructions" type="textarea"></input-field>
-            <file-upload id="fileUpload" label="Picture"></file-upload>
-            <img id="image" class="is-hidden mt-2"></img>
+
+            <file-upload id="fileUpload1" label="Picture 1"></file-upload>
+            <img id="image1" class="is-hidden mt-2"></img>
+            <button id="removePicture1" class="button is-warning is-hidden">Remove Picture 1</button>
+
+            <file-upload id="fileUpload2" label="Picture 2"></file-upload>
+            <img id="image2" class="is-hidden mt-2"></img>
+            <button id="removePicture2" class="button is-warning is-hidden">Remove Picture 2</button>
+
+            <file-upload id="fileUpload3" label="Picture 3"></file-upload>
+            <img id="image3" class="is-hidden mt-2"></img>
+            <button id="removePicture3" class="button is-warning is-hidden">Remove Picture 3</button>
+
             <div class="mt-2">
                 <button id="saveButton" class="button is-success">Save</button>
                 <button id="backButton" class="button is-info">Back</button>
@@ -99,8 +118,16 @@ export class RecipePage {
         this._nameField = shadow.getElementById('name');
         this._sourceField = shadow.getElementById('source');
         this._instructionsField = shadow.getElementById('instructions');
-        this._fileUpload = shadow.getElementById('fileUpload');
-        this._imageField  = shadow.getElementById('image');
+
+        for(let x = 1; x <= this._maxImages; x++) {
+            this._fileUpload.push(shadow.getElementById(`fileUpload${x}`));
+            this._imageField.push(shadow.getElementById(`image${x}`));
+            shadow.getElementById(`removePicture${x}`).onclick = () => {
+                this._recipe[this.getImageStorageKeyFieldName(x)] = null;
+                this.displayPicture(x - 1, null);
+            }
+        }
+
         this._saveProgress = shadow.getElementById('saveProgress');
         this._saveConfirmation = shadow.getElementById('saveConfirmation');
 
@@ -120,22 +147,37 @@ export class RecipePage {
         this._nameField.value = recipe.name;
         this._sourceField.value = recipe.source;
         this._instructionsField.value = recipe.instructions;
-        await this.displayPicture(recipe);
+        await this.displayPictures(recipe);
+    }
+
+    /**
+     * Displays all of the pictures
+     * @param {Recipe} recipe 
+     */
+    async displayPictures(recipe) {
+        const promises = [];
+        for (let x = 1; x <= this._maxImages; x++) {
+            promises.push(this.displayPicture(x - 1, recipe[this.getImageStorageKeyFieldName(x)]));
+        }
+        await Promise.all(promises);
     }
 
     /**
      * Displays the picture if there is one loaded
-     * @param {Recipe} recipe 
+     * @param {Number} index - the index of the picture to show
+     * @param {String} imageStorageKey - unique ID of the picture
      */
-    async displayPicture(recipe) {
-        this._imageField.classList.add("is-hidden");
-        if (recipe.imageStorageKey) {
-            this._imageField.src = await this._global.recipeService.getDownloadUrl(recipe.imageStorageKey);
-            this._imageField.classList.remove("is-hidden");
+    async displayPicture(index, imageStorageKey) {
+        const imageField = this._imageField[index];
+        imageField.classList.add("is-hidden");
+        if (imageStorageKey) {
+            imageField.src = await this._global.recipeService.getDownloadUrl(imageStorageKey);
+            imageField.classList.remove("is-hidden");
         } else {
-            this._imageField.src = '';
+            imageField.src = '';
         }
     }
+
     /**
      * Updates the _recipe object with the user entered values
      * in the HTML fields.
@@ -150,9 +192,25 @@ export class RecipePage {
      * If a file has been selected, uploads the file to the server
      */
     async uploadFiles() {
-        const file = this._fileUpload.file;
-        if (file) {
-            this._recipe.imageStorageKey = await this._global.recipeService.uploadFile(file);
+        for(let x = 1; x <= this._maxImages; x++) {
+            const file = this._fileUpload[x - 1].file;
+            if (file) {
+                let fileStorageKey = await this._global.recipeService.uploadFile(file);
+                this._recipe[this.getImageStorageKeyFieldName(x)] = fileStorageKey;
+            }
+        }
+    }
+
+    /**
+     * Returns the field name of an imageStorageKey field
+     * @param {Number} index 
+     * @returns Name of field
+     */
+    getImageStorageKeyFieldName(index) {
+        if (index === 1) {
+            return 'imageStorageKey';
+        } else {
+            return `imageStorageKey${index}`;
         }
     }
 
@@ -172,9 +230,17 @@ export class RecipePage {
         }
         this._saveProgress.classList.add('is-hidden');
         this._saveConfirmation.classList.remove('is-hidden');
+        await this.resetPictures();
+    }
 
-        this._fileUpload.clearUpload();
-        await this.displayPicture(this._recipe);
+    /**
+     * Clears any uploaded pictures and reloads the picture controls
+     */
+    async resetPictures() {
+        for(let x = 0; x < this._maxImages; x++) {
+            this._fileUpload[x].clearUpload();
+            await this.displayPictures(this._recipe);
+        }
     }
 }
 
