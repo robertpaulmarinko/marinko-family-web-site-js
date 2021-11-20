@@ -1,4 +1,4 @@
-import '../components/recipe-card-component.js';
+import '../components/recipe-panel-block-component.js';
 import '../components/search-field-component.js';
 
 export class RecipesPage {
@@ -17,6 +17,11 @@ export class RecipesPage {
      * Last search text entered by the user
      */
     _lastSearchText = '';
+
+    /**
+     * The search field component
+     */
+    _searchField = null;
 
     constructor(global) {
         this._global = global;
@@ -37,25 +42,37 @@ export class RecipesPage {
     renderPageContent(htmlElement) {
         const template = document.createElement('template');
         template.innerHTML = `
+        <link rel="stylesheet" href="/styles/bulma.min.css">
         <div class="container">
-            <link rel="stylesheet" href="/styles/bulma.min.css">
-            <h1 class="title is-4">Recipes</h1>
-            <div>
-                <button id="addButton" class="button is-info">Add Recipe</button>
+        <nav class="panel is-link">
+            <p class="panel-heading is-flex is-flex-direction-row">
+                <span class="is-flex-grow-1">Recipes</span>
+                <button id="addButton" class="button is-success is-flex-grow-1 mr-2">Add Recipe</button>
+                <button id="randomButton" class="button is-primary is-flex-grow-1">Random</button>
+            </p>
+            <div class="panel-block">
+                <search-field></search-field>
+                <button id="clearButton" class="button is-warning ml-2">Clear</button>
             </div>
-            <search-field></search-field>
-            <div id="recipeList" class="columns is-multiline mt-2"></div>
+            <div id="recipeList""></div>
+        </nav>
         </div>
         `;
         
         const shadow = htmlElement.attachShadow({ mode: 'open' });
         shadow.appendChild(template.content.cloneNode(true));
 
-        shadow.querySelector("search-field").addEventListener('search', (event) => {
+        this._searchField = shadow.querySelector("search-field");
+        this._searchField.addEventListener('search', (event) => {
             this._lastSearchText = event.detail;
             this.filterRecipes(this._lastSearchText);
         });
         shadow.getElementById('addButton').onclick = () => { this._global.routingService.loadPage(`recipe`, true); };
+        shadow.getElementById('randomButton').onclick = () => { this.randomRecipes(); };
+        shadow.getElementById('clearButton').onclick = () => { 
+            this._searchField.clear(); 
+            this.filterRecipes('');
+        };
 
         this._recipeListHTMLElement = shadow.querySelector("#recipeList");
     }
@@ -65,22 +82,19 @@ export class RecipesPage {
      * @param {Recipe[]} recipes 
      */
      renderRecipes(recipes) {
-        const columnElements = [];
+        const panelBlockElements = [];
         recipes.forEach((recipe) => {
-            const columnElement = document.createElement('div');
-            columnElement.setAttribute('class', 'column is-half');
-            columnElements.push(columnElement);
-
-            const recipeCard = document.createElement('recipe-card');
-            recipeCard.setAttribute('name', recipe.name);
-            recipeCard.setAttribute('source', recipe.source);
-            recipeCard.addEventListener('edit', () => {
+            const panelBlockElement = document.createElement('recipe-panel-block');
+            panelBlockElement.setAttribute('name', recipe.name);
+            panelBlockElement.setAttribute('source', recipe.source);
+            panelBlockElement.addEventListener('edit', () => {
                 console.log(`Opening recipe page for id = ${recipe.id}`);
                 this._global.routingService.loadPage(`recipe?id=${recipe.id}`, true);
             });
-            columnElement.appendChild(recipeCard);
+
+            panelBlockElements.push(panelBlockElement);
         });
-        this._recipeListHTMLElement.replaceChildren(...columnElements);
+        this._recipeListHTMLElement.replaceChildren(...panelBlockElements);
     }
 
     /**
@@ -96,6 +110,35 @@ export class RecipesPage {
         });
         this.renderRecipes(filteredRecipes);
     }
+
+    /**
+     * Picks 5 Random Recipes
+     */
+     async randomRecipes() {
+        const randomRecipes = [];
+        const randomRecipeIndexes = [];
+
+        const allRecipes = await this._global.recipeService.getRecipes();
+        let randomIndex;
+        while(randomRecipeIndexes.length < 5) {
+            do {
+                randomIndex = this.getRandomInt(0, allRecipes.length);
+            } while(randomRecipeIndexes.includes(randomIndex));
+            randomRecipeIndexes.push(randomIndex);
+        }
+        for( const index of randomRecipeIndexes) {
+            randomRecipes.push(allRecipes[index]);
+        }
+
+        this.renderRecipes(this._global.recipeService.sortRecipes(randomRecipes));
+    }
+
+    getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+    }
+      
 }
 
 export function createPage(global) {

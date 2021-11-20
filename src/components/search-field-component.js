@@ -2,7 +2,6 @@ const template = document.createElement('template');
 template.innerHTML = `
 <link rel="stylesheet" href="/styles/bulma.min.css">
 <div class="field">
-  <label class="label">Search</label>
   <div class="control">
     <input id="search" class="input" type="text" placeholder="recipe name">
   </div>
@@ -10,6 +9,8 @@ template.innerHTML = `
 `;
 
 class SearchFieldComponent extends HTMLElement {
+    _searchTextBox = null;
+
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
@@ -18,15 +19,18 @@ class SearchFieldComponent extends HTMLElement {
     connectedCallback() {
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
-        const searchTextBox = this.shadowRoot.getElementById('search');
-        searchTextBox.onkeyup = (event) => {
+        this._searchTextBox = this.shadowRoot.getElementById('search');
+        this._searchTextBox.onkeyup = (event) => {
             // https://developer.mozilla.org/en-US/docs/Web/Events/Creating_and_triggering_events
             // note that "detail" is a key word
-            const searchEvent = new CustomEvent('search', { detail: searchTextBox.value });
+            const searchEvent = new CustomEvent('search', { detail: this._searchTextBox.value });
             this.dispatchEvent(searchEvent);
         };
     }
 
+    clear() {
+      this._searchTextBox.value = '';
+    }
 }
 
 customElements.define('search-field', SearchFieldComponent);
