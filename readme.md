@@ -13,9 +13,17 @@ To start run
 
 ## Deploying to AWS
 
-Web site files are hosted in a S3 bucket call www.marinkofamily.com
+Web site files are in a S3 bucket call www.marinkofamily.com.
 
 Run the `./deploy.ps1` PowerShell file to upload files to the bucket
+
+## AWS Hosting
+
+The website is hosted using a CloudFront distribution.
+
+In the CloudFront distribution, custom error responses are added for 400, 403 and 404 error codes.  The response redirects to /index.html and returns a 200 response.  That way if a url to a specific path is used, which will not exist in S3, CloudFront will redirect to the index.html page, which will handle rendering the correct content.
+
+Not sure if 400 and 404 are really needed, this did not start working until the 403 code was added.
 
 
 ## Web Components Resources
