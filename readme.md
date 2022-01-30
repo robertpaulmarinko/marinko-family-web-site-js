@@ -17,15 +17,6 @@ Web site files are in a S3 bucket call www.marinkofamily.com.
 
 Run the `./deploy.ps1` PowerShell file to upload files to the bucket
 
-## AWS Hosting
-
-The website is hosted using a CloudFront distribution.
-
-In the CloudFront distribution, custom error responses are added for 400, 403 and 404 error codes.  The response redirects to /index.html and returns a 200 response.  That way if a url to a specific path is used, which will not exist in S3, CloudFront will redirect to the index.html page, which will handle rendering the correct content.
-
-Not sure if 400 and 404 are really needed, this did not start working until the 403 code was added.
-
-
 ## Web Components Resources
 
 [Mozilla Web Component Documentation](https://developer.mozilla.org/en-US/docs/Web/Web_Components)
@@ -126,6 +117,10 @@ Turn On the restrict bucket access option.
 
 Set the CNAME to www.marinkofamily.com.  Must be done to allow the Route53 record to be created
 
+In the CloudFront distribution, custom error responses are added for 400, 403 and 404 error codes.  The response redirects to /index.html and returns a 200 response.  That way if a url to a specific path is used, which will not exist in S3, CloudFront will redirect to the index.html page, which will handle rendering the correct content.
+
+Not sure if 400 and 404 are really needed, this did not start working until the 403 code was added.
+
 ## Route53
 
 In Route53, create a DNS Alias (A) record for www.marinkofamily.com that points to the CloudFront distribution.
@@ -143,3 +138,20 @@ The solution is to call the `aws s3 sync` command multiple times.  The first tim
 The second call uploads the .js files and sets the correct mime type.
 
 See the deploy.ps1 file
+
+## VSCode Extensions
+
+To get HTML syntax highlighting with strings in VS, use this extension
+
+https://marketplace.visualstudio.com/items?itemName=Tobermory.es6-string-html
+
+```
+template.innerHTML = /*html*/`
+<link rel="stylesheet" href="/styles/bulma.min.css">
+<div class="field">
+  <div class="control">
+    <input id="search" class="input" type="text" placeholder="recipe name">
+  </div>
+</div>
+`;
+```

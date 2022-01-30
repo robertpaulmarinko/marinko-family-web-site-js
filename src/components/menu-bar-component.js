@@ -1,5 +1,5 @@
 const template = document.createElement('template');
-template.innerHTML = `
+template.innerHTML = /*html*/`
 <link rel="stylesheet" href="/styles/bulma.min.css">
 <nav class="navbar is-info" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">

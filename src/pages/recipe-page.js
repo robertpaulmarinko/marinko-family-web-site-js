@@ -77,7 +77,7 @@ export class RecipePage {
      */
     renderPageContent(htmlElement) {
         const template = document.createElement('template');
-        template.innerHTML = `
+        template.innerHTML = /*html*/`
         <link rel="stylesheet" href="/styles/bulma.min.css">
         <div class="container">
             <h1 class="title is-4">Recipe</h1>

@@ -1,5 +1,5 @@
 const template = document.createElement('template');
-template.innerHTML = `
+template.innerHTML = /*html*/`
 <link rel="stylesheet" href="/styles/bulma.min.css">
 <div class="card">
   <header class="card-header">

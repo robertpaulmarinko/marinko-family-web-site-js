@@ -1,5 +1,5 @@
 const template = document.createElement('template');
-template.innerHTML = `
+template.innerHTML = /*html*/`
 <div class="container">
     <div class="field">
         <label class="label">Password</label>

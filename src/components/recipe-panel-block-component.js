@@ -1,5 +1,5 @@
 const template = document.createElement('template');
-template.innerHTML = `
+template.innerHTML = /*html*/`
 <link rel="stylesheet" href="/styles/bulma.min.css">
 <a id="edit" class="panel-block is-flex-direction-row is-flex-wrap-wrap">
     <div id="name" class="is-size-4 is-flex-grow-1 style="min-width: 300px"></div>
